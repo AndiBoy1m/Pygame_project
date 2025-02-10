@@ -44,19 +44,19 @@ class Player:
 
     def move(self):
         key = pygame.key.get_pressed()
-        # movement
+        # движение
         if key[pygame.K_LEFT] and self.rect.x >= 0:
             self.rect.x -= 10
             self.image = self.player_pos[0]
         if key[pygame.K_RIGHT] and self.rect.x <= 400:
             self.rect.x += 10
             self.image = self.player_pos[1]
-        # finite space
+        # конечное пространство
         if self.rect.x < 0:
             self.rect.x = 400
         if self.rect.x > 400:
             self.rect.x = 0
-        # jumping
+        # прыжок
         if key[pygame.K_SPACE] and self.rect.bottom >= 800:
             self.gravity = -20
             self.jump_sound.play()
@@ -68,7 +68,7 @@ class Player:
             self.rect.bottom = 800
 
     def collisions(self):
-        # collision with platforms
+        # столкновение с платформами
         global platforms_group
         dy = self.gravity
         s = 0
@@ -84,7 +84,7 @@ class Player:
                         dy = 0
                         self.gravity = -20
 
-                        # Handle broken platform logic
+                        # Обрабатывать нарушенную логику платформы
                         if platform.type == 'Brown':
                             image = pygame.image.load('brplatbr.png').convert_alpha()
                             platform.image = pygame.transform.scale(image, (80, 20))
@@ -100,7 +100,7 @@ class Player:
         if self.rect.y <= 500:
             if self.gravity < 0:
                 s = -dy
-        # collision with booster
+        # столкновение с ускорителем
         rocket_start = time.time()
         global booster
         for booster in boosters:
@@ -111,21 +111,21 @@ class Player:
                 rocket_start = time.time()
                 self.rocket_sound.play()
                 booster.kill()
-        # check if there is enough fuel to fly
+        # проверка, достаточно ли топлива для полета
         if time.time() - rocket_start > 4:
             self.image = self.player_pos[0]
-        # collision with monsters
+        # столкновение с монстрами
         global game_active
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x, self.rect.y + dy, 50, 50):
                 game_active = False
-        # return scroll variable to update screen
+        # возвращает переменную прокрутки на экран обновления
         return s
 
     def fire(self):
         key = pygame.key.get_pressed()
         global bullets
-        # movement
+        # движение
         if key[pygame.K_UP]:
             self.image = self.player_pos[2]
             if time.time() - self.fire_timer > 0.5:
@@ -167,7 +167,7 @@ class Boosters(pygame.sprite.Sprite):
 
 
 class Platform(pygame.sprite.Sprite):
-    # 3 platform types: static (green), moving (blue), broken (brown)
+    # 3 типа платформ: статическая (green), движущаяся (blue), сломанная (brown)
     def __init__(self, x, y, image_name, type):
         super().__init__()
         image = pygame.image.load(image_name).convert_alpha()
@@ -203,11 +203,11 @@ class Monster(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        # for movement
+        # для движения
         self.pos_change = 0
         self.dx = 1
 
-    # check for a collision with bullets
+    # проверьте, нет ли столкновения с пулями
     def dodging_from_bullets(self):
         global bullets
         for bullet in bullets:
@@ -231,15 +231,15 @@ class Monster(pygame.sprite.Sprite):
         self.dodging_from_bullets()
 
 
-# create background
+# создать фон
 def draw_background():
     screen.blit(background, (0, 0))
     screen.blit(background, (0, 800))
 
 
 def display_score():
-    # global stop_time
-    #player.score = int(pygame.time.get_ticks() / 1000) - start - stop_time
+    # глобальное время остановки
+    # player.score = int(pygame.time.get_ticks() / 1000) - start - stop_time
     player.score += player.collisions()
     score_surf = test_font.render('Счёт: {}'.format(player.score), False, (0, 0, 0))
     score_rect = score_surf.get_rect(center=(320, 20))
@@ -247,7 +247,7 @@ def display_score():
     return player.score
 
 
-# Initial preset of a game
+# Начальная настройка игры
 
 def floor_collision():
     global player
@@ -256,7 +256,7 @@ def floor_collision():
         game_active = False
 
 
-# updating platform group when the background moved up
+# обновление группы платформ при изменении фона
 def update_platforms():
     global platforms_group, platform_types, images, rocket_x, rocket_y
     for platform in platforms_group:
@@ -345,16 +345,16 @@ if __name__ == "__main__":
     bg_music.play(loops=-1)
     bg_music.set_volume(0.2)
 
-    # Screen
+    # Экран
     HEIGHT = 800
     WIDTH = 320
-    # Player
+    # Игрок
     player = Player()
 
-    # Bullets
+    # Пули
     bullets = pygame.sprite.Group()
 
-    # Starting platform
+    # Стартовая платформа
     platforms_group = pygame.sprite.Group()
     platform = platforms_group.add(Platform(150, 730, 'grplat.png', 'Green'))
     platform_types = ['Green', 'Blue', 'Brown']
@@ -362,7 +362,7 @@ if __name__ == "__main__":
               'blplat.png',
               'brplat.png']
 
-    # Monsters
+    # Монстры
     monster_timer = time.time()
     monsters = pygame.sprite.Group()
     monster_types = ['OneEyed', 'LargeBlue', 'ButterFly']
@@ -373,13 +373,13 @@ if __name__ == "__main__":
         y = 600 / max_platforms * i
         platforms_group.add(Platform(x, y, images[type], platform_types[type]))
 
-    # Booster
+    # Усилитель
     boosters = pygame.sprite.Group()
-    # Background
+    # Задний фон
     background_pos = 0
     background = pygame.image.load('Site-background-light.png').convert()
 
-    # Intro screen
+    # Начальный экран
     doodle = pygame.image.load('right.png').convert_alpha()
     doodle_rect = doodle.get_rect(midbottom=(200, 800))
 
