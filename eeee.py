@@ -354,11 +354,11 @@ def choose_difficulty(screen, background, clock, test_font):
                     waiting = False
                 if event.key == pygame.K_2:
                     difficulty = "Medium"
-                    player_speed = 12  # Увеличение скорости для средней сложности
+                    player_speed = 16  # Увеличение скорости для средней сложности
                     waiting = False
                 if event.key == pygame.K_3:
                     difficulty = "Hard"
-                    player_speed = 16  # Увеличение скорости для сложной сложности
+                    player_speed = 32  # Увеличение скорости для сложной сложности
                     waiting = False
         screen.blit(background, (0, 0))
         screen.blit(easy_text, easy_rect)
