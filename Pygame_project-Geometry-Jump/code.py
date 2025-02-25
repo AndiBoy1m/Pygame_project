@@ -327,38 +327,48 @@ def display_win_screen(screen, font, score):
 
 
 # Выбор сложности
-def show_difficulty_screen(screen, font):
-    screen.fill((0, 0, 0))  # Чёрный фон
-    title_text = font.render("Выбери сложность", True, (255, 255, 255))
-    easy_text = font.render("1. Лёгкий", True, (0, 255, 0))
+def choose_difficulty(screen, font, background, clock):
+    easy_text = font.render("1. Легкий", True, (0, 255, 0))
     medium_text = font.render("2. Средний", True, (255, 255, 0))
     hard_text = font.render("3. Сложный", True, (255, 0, 0))
+    info_text = font.render("Выберите сложность (1, 2, 3)", True, (255, 255, 255))
 
-    title_rect = title_text.get_rect(center=(400 // 2, 800 // 6))
-    easy_rect = easy_text.get_rect(center=(400 // 2, 800 // 3))
-    medium_rect = medium_text.get_rect(center=(400 // 2, 800 // 2))
-    hard_rect = hard_text.get_rect(center=(400 // 2, 800 * 2 // 3))
+    easy_rect = easy_text.get_rect(center=(200, 250))
+    medium_rect = medium_text.get_rect(center=(200, 350))
+    hard_rect = hard_text.get_rect(center=(200, 450))
+    info_rect = info_text.get_rect(center=(200, 150))
 
-    screen.blit(title_text, title_rect)
-    screen.blit(easy_text, easy_rect)
-    screen.blit(medium_text, medium_rect)
-    screen.blit(hard_text, hard_rect)
-
-    pygame.display.update()
-
-    while True:
+    player_speed = 0
+    difficulty = ""
+    waiting = True
+    while waiting:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    return 1  # Лёгкий
-                elif event.key == pygame.K_2:
-                    return 2  # Средний
-                elif event.key == pygame.K_3:
-                    return 3  # Сложный
-        pygame.time.Clock().tick(60)  # FPS
+                    difficulty = "Легкий"
+                    player_speed = 8  # Уменьшение скорости для легкой сложности
+                    waiting = False
+                if event.key == pygame.K_2:
+                    difficulty = "Средний"
+                    player_speed = 16  # Увеличение скорости для средней сложности
+                    waiting = False
+                if event.key == pygame.K_3:
+                    difficulty = "Сложный"
+                    player_speed = 32  # Увеличение скорости для сложной сложности
+                    waiting = False
+        screen.blit(background, (0, 0))
+        screen.blit(easy_text, easy_rect)
+        screen.blit(medium_text, medium_rect)
+        screen.blit(hard_text, hard_rect)
+        screen.blit(info_text, info_rect)
+        pygame.display.update()
+        clock.tick(60)
+
+    print(f"Выбранная сложность: {difficulty} (Скорость: {player_speed})")
+    return player_speed  # Return the selected player_speed
 
 
 if __name__ == "__main__":
@@ -395,9 +405,6 @@ if __name__ == "__main__":
     win_image = pygame.image.load('win.png').convert_alpha()  # Загружаем картинку выигрыша
     win_image = pygame.transform.scale(win_image, (400, 800))  # resize win image
 
-    lose_image_rect = lose_image.get_rect()  # Получаем прямоугольник
-    win_image_rect = win_image.get_rect()  # Получаем прямоугольник
-
     lose_image_duration = 5  # Длительность отображения картинки проигрыша (в секундах)
     win_image_duration = 5  # Длительность отображения картинки выигрыша (в секундах)
 
@@ -423,8 +430,10 @@ if __name__ == "__main__":
     game_message_pause = test_font.render('Нажми P чтобы поставить паузу', False, (0, 0, 0))
     message_pause = game_message.get_rect(center=(150, 400))
 
-    # Игровой цикл
-    difficulty = show_difficulty_screen(screen, test_font)
+    # Выбор сложности и получение player_speed
+    player_speed = choose_difficulty(screen, test_font, background, clock)
+    difficulty = player_speed // 4 #Определяем сложность по player_speed для Player
+
     game_speed = difficulty * 0.5  # Скорость зависит от сложности
 
     # Инициализация групп
