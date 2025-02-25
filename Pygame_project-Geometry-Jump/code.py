@@ -417,13 +417,11 @@ if __name__ == "__main__":
     game_name_rect = game_name.get_rect(center=(200, 150))
 
     game_message = test_font.render('Нажми SPACE чтобы начать', False, (0, 0, 0))
-    message_space = game_message.get_rect(center=(200, 450))
+    message_space = game_message.get_rect(center=(150, 450))
     game_message_left = test_font.render('Используй стрелки для движения', False, (0, 0, 0))
-    message_left = game_message.get_rect(center=(200, 500))
-    game_message_right = test_font.render('Нажми L чтобы загрузить сохранение', False, (0, 0, 0))
-    message_right = game_message.get_rect(center=(200, 550))
+    message_left = game_message.get_rect(center=(150, 500))
     game_message_pause = test_font.render('Нажми P чтобы поставить паузу', False, (0, 0, 0))
-    message_pause = game_message.get_rect(center=(200, 400))
+    message_pause = game_message.get_rect(center=(150, 400))
 
     # Игровой цикл
     difficulty = show_difficulty_screen(screen, test_font)
@@ -489,7 +487,7 @@ if __name__ == "__main__":
             player.update(scroll)  # Обновляем игрока
 
             # Условие выйгрыша
-            if player.score >= 5000:
+            if player.score >= 150:
                 score = player.score  # Текущий счет
                 game_active = False  # Игра не активна
                 win = True  # Выйгрыш
@@ -557,7 +555,6 @@ if __name__ == "__main__":
                 screen.blit(game_name, game_name_rect)  # Рисуем название игры
                 screen.blit(game_message, message_space)  # Рисуем сообщение
                 screen.blit(game_message_left, message_left)  # Рисуем сообщение
-                screen.blit(game_message_right, message_right)  # Рисуем сообщение
                 screen.blit(game_message_pause, message_pause)  # Рисуем сообщение
             else:  # Если счет не 0
                 score_message = test_font.render(f'Твой счёт: {score}', False, (0, 0, 0))  # Отображаем счет
